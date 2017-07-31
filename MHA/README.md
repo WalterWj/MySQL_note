@@ -1,8 +1,8 @@
-[toc]
+[TOC]
 
 # MHA集群架构
 - perl语言写的，一个开源的工具，日本出品
-<img src="https://github.com/jun8261825/MySQL_note/blob/master/MHA1.jpg" width="400px" />
+<img src="https://github.com/jun8261825/MySQL_note/blob/master/MHA/MHA1.jpg" width="400px" />
 
 >MHA 角色：
 manager    管理人

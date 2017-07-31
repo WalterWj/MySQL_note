@@ -464,6 +464,6 @@ Fri Sep 16 13:49:54 2016 - [info]  All other slaves should start replication fro
 5. 切换成主库的服务器会创建vip地址
 
 # mha的限制
-不支持多级复制
-不支持日志为statment级别的load data infile
-不支持MySQL5.0以前的版本
+1. 不支持多级复制
+2. 不支持日志为statment级别的load data infile
+3. 不支持MySQL5.0以前的版本

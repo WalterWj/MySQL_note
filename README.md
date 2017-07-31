@@ -457,11 +457,11 @@ Fri Sep 16 13:49:54 2016 - [info]  All other slaves should start replication fro
 **获取上述信息以后，就可以直接在修复后的`master`上执行`change master to`相关操作，重新作为从库了。**
 
 ## 七.出现问题自动调整的相关变化
-1.这样就会只有一主一从
-2.app1.cnf配置文件汇总server1的配置信息会自动删除
-3.从库的master to信息会被消除
-4.两个从库不在指向主库
-5.切换成主库的服务器会创建vip地址
+1. 这样就会只有一主一从
+2. app1.cnf配置文件汇总server1的配置信息会自动删除
+3. 从库的master to信息会被消除
+4. 两个从库不在指向主库
+5. 切换成主库的服务器会创建vip地址
 
 # mha的限制
 不支持多级复制

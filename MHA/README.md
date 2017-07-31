@@ -18,12 +18,12 @@ manager是监控master的，默认每3秒会去监控master。
 - node包括master和slave
 
 ## master出现故障后，故障转移的大致流程：
-1.会检查所有的slave是否正常，服务器，SSH，mysql
-2.检查所有slave，获取最新binlog，找到latest slave
-3.lastest slave和master对比，生成差异的binlog，并且保存到manager，会先在工作目录生成，然后传输。
-4.latest slave和其他slave比较，生成他们之间的差异binlog，并且传输到slave，这是所有slave和binlog都是一致的了。
-5.选出new master，然后将第三步生成的差异binlog传输到new master。
-6.其他slave指定new master
+1. 会检查所有的slave是否正常，服务器，SSH，mysql
+2. 检查所有slave，获取最新binlog，找到latest slave
+3. lastest slave和master对比，生成差异的binlog，并且保存到manager，会先在工作目录生成，然后传输。
+4. latest slave和其他slave比较，生成他们之间的差异binlog，并且传输到slave，这是所有slave和binlog都是一致的了。
+5. 选出new master，然后将第三步生成的差异binlog传输到new master。
+6. 其他slave指定new master
 
 ## 修改主机名
 ```

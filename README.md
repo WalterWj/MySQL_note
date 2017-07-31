@@ -118,7 +118,7 @@ create user 'monitor'@'172.16.12.%' identified by '123456';
 grant all privileges on *.* to 'monitor'@'172.16.12.%';
 flush  privileges;
 ```
-** 到这里整个集群环境已经搭建完毕，剩下的就是配置MHA软件了。 **
+**到这里整个集群环境已经搭建完毕，剩下的就是配置MHA软件了。**
 
 ## 五.配置MHA
 ### 1，创建MHA的工作目录，并且创建相关配置文件
@@ -167,8 +167,8 @@ set global relay_log_purge=0;
 - 注意：
    MHA在发生切换的过程中，从库的恢复过程中依赖于relay log的相关信息，所以这里要将relay log的自动清除设置为OFF，采用手动清除relay log的方式。在默认情况下，从服务器上的中继日志会在SQL线程执行完毕后被自动删除。但是在MHA环境中，这些中继日志在恢复其他从服务器时可能会被用到，因此需要禁用中继日志的自动删除功能。定期清除中继日志需要考虑到复制延时的问题。在ext3的文件系统下，删除大的文件需要一定的时间，会导致严重的复制延时。为了避免复制延时，需要暂时为中继日志创建硬链接，因为在linux系统中通过硬链接删除大文件速度会很快。（在mysql数据库中，删除大表时，通常也采用建立硬链接的方式）
 
-###4，pure_relay_logs.sh脚本使用
-   MHA节点中包含了pure_relay_logs命令工具，它可以为中继日志创建硬链接，执行SET GLOBAL relay_log_purge=1,等待几秒钟以便SQL线程切换到新的中继日志，再执行SET GLOBAL relay_log_purge=0。
+### 4，pure_relay_logs.sh脚本使用
+   MHA节点中包含了`pure_relay_logs`命令工具，它可以为中继日志创建硬链接，执行`SET GLOBAL relay_log_purge=1`,等待几秒钟以便SQL线程切换到新的中继日志，再执行`SET GLOBAL relay_log_purge=0`。
    
 - pure_relay_logs脚本参数如下所示：
 ```
@@ -205,9 +205,9 @@ $purge --user=$user --password=$passwd --disable_relay_log_purge --port=$port --
 0 4 * * * /bin/bash /root/purge_relay_log.sh
 ```
 
-- purge_relay_logs脚本删除中继日志不会阻塞SQL线程。
+- `purge_relay_logs`脚本删除中继日志不会阻塞SQL线程。
 
-###5，检查SSH配置
+### 5，检查SSH配置
 - 检查MHA Manger到所有MHA Node的SSH连接状态：
 ```
 masterha_check_ssh --conf=/etc/masterha/app1.cnf 
@@ -233,14 +233,14 @@ Fri Sep 16 11:07:36 2016 - [debug]   ok.
 Fri Sep 16 11:07:36 2016 - [info] All SSH connection tests passed successfully.
 ```
 
-###6，配置VIP和master_ip_failover文件
+### 6，配置VIP和master_ip_failover文件
 - 在master上执行
 
 - vip：配置ip的子接口。
 `#/sbin/ifconfig eth0:1 172.16.12.99/16`
 
 - 在monitor上执行
- - 通过脚本的方式管理VIP。这里是修改/usr/local/bin/master_ip_failover，没有就创建(注意创建完成后给执行权限)
+ - 通过脚本的方式管理VIP。这里是修改`/usr/local/bin/master_ip_failover`，没有就创建(注意创建完成后给执行权限)
  
 **注意脚本中的VIP，网口名和ssh_user用户名**
 
@@ -346,9 +346,8 @@ print
 }
 ```
 
-###7，配置master_ip_online_change文件
+### 7，配置`master_ip_online_change`文件
 - 先修改`/usr/local/bin/master_ip_online_change`，没有就创建(创建之后注意给执行权限)
-
 文件内容如下：
 ```
 #/bin/bash  
@@ -395,7 +394,7 @@ if [ $command = 'start' -o $command = 'status' ]
 fi 
 ```
 
-###8，检查整个复制环境状况。
+### 8，检查整个复制环境状况。
 - 通过masterha_check_repl脚本查看整个集群的状态
 ```
 masterha_check_repl --conf=/etc/masterha/app1.cnf
@@ -403,8 +402,8 @@ masterha_check_repl --conf=/etc/masterha/app1.cnf
 
 - 在此之间，如果报错权限不够的话，那么就将对应文件夹于权限
 
-###9，检查MHA Manager的状态：
-- 通过master_check_status脚本查看Manager的状态：
+### 9，检查MHA Manager的状态：
+- 通过`master_check_status`脚本查看`Manager`的状态：
 ```
 masterha_check_status --conf=/etc/masterha/app1.cnf
 app1 is stopped(2:NOT_RUNNING).
@@ -415,7 +414,7 @@ app1 is stopped(2:NOT_RUNNING).
 app1 (pid:12597) is running(0:PING_OK), master:172.16.50.85
 ```
 
-###10，开启MHA Manager监控
+### 10，开启`MHA Manager`监控
 `nohup masterha_manager --conf=/etc/masterha/app1.cnf --remove_dead_master_conf --ignore_last_failover < /dev/null > /var/log/masterha/app1/manager.log 2>&1 `
 
 - 启动参数介绍：
@@ -430,14 +429,14 @@ app1 (pid:12597) is running(0:PING_OK), master:172.16.50.85
 - 查看MHA Manager监控是否正常：
 `masterha_check_status --conf=/etc/masterha/app1.cnf`
 
-###11，关闭MHA Manage监控
-- 关闭很简单，使用masterha_stop命令完成。
+### 11，关闭`MHA Manage`监控
+- 关闭很简单，使用`masterha_stop`命令完成。
 `masterha_stop --conf=/etc/masterha/app1.cnf`
 
-##六.故障检查
-###1.出现问题在线切换
+## 六.故障检查
+### 1.出现问题在线切换
 - 步骤如下：
-a)首先，停掉MHA监控：
+a)首先，停掉`MHA`监控：
 `masterha_stop --conf=/etc/masterha/app1.cnf`
 b)其次，进行在线切换操作
 `masterha_master_switch --conf=/etc/masterha/app1.cnf --master_state=alive --new_master_host=172.16.12.110 --new_master_port=3306 --orig_master_is_new_slave --running_updates_limit=10000`
@@ -448,23 +447,23 @@ b)其次，进行在线切换操作
    --running_updates_limit=10000,故障切换时,候选master 如果有延迟的话， mha 切换不能成功，加上此参数表示延迟在此时间范围内都可切换（单位为s），但是切换的时间长短是由recover 时relay 日志的大小决定 
 ```
 
-###2.修复宕机的Master 
+### 2.修复宕机的Master 
    通常情况下自动切换以后，原master可能已经废弃掉，待原master主机修复后，如果数据完整的情况下，可能想把原来master重新作为新主库的slave，这时我们可以借助当时自动切换时刻的MHA日志来完成对原master的修复。下面是提取相关日志的命令：
 ```
 grep -i "All other slaves should start" /var/log/masterha/app1/manager.log 
 
 Fri Sep 16 13:49:54 2016 - [info]  All other slaves should start replication from here. Statement should be: CHANGE MASTER TO MASTER_HOST='172.16.50.95', MASTER_PORT=3306, MASTER_LOG_FILE='mysqlbinlog.000003', MASTER_LOG_POS=154, MASTER_USER='repl', MASTER_PASSWORD='xxx';
 ```
-**获取上述信息以后，就可以直接在修复后的master上执行change master to相关操作，重新作为从库了。**
+**获取上述信息以后，就可以直接在修复后的`master`上执行`change master to`相关操作，重新作为从库了。**
 
-##七.出现问题自动调整的相关变化
+## 七.出现问题自动调整的相关变化
 1.这样就会只有一主一从
 2.app1.cnf配置文件汇总server1的配置信息会自动删除
 3.从库的master to信息会被消除
 4.两个从库不在指向主库
 5.切换成主库的服务器会创建vip地址
 
-#mha的限制
+# mha的限制
 不支持多级复制
 不支持日志为statment级别的load data infile
 不支持MySQL5.0以前的版本

@@ -1,4 +1,4 @@
-[toc]
+
 
 # MHA集群架构
 - perl语言写的，一个开源的工具，日本出品
@@ -7,7 +7,7 @@
 manager    管理人
 node    节点
 
-##工作原理：
+## 工作原理：
 manger管理监控每一个一主两从的集群
 manager是监控master的，默认每3秒会去监控master。
 
@@ -16,7 +16,7 @@ manager是监控master的，默认每3秒会去监控master。
 
 - node包括master和slave
 
-##master出现故障后，故障转移的大致流程：
+## master出现故障后，故障转移的大致流程：
 1.会检查所有的slave是否正常，服务器，SSH，mysql
 2.检查所有slave，获取最新binlog，找到latest slave
 3.lastest slave和master对比，生成差异的binlog，并且保存到manager，会先在工作目录生成，然后传输。
@@ -24,17 +24,17 @@ manager是监控master的，默认每3秒会去监控master。
 5.选出new master，然后将第三步生成的差异binlog传输到new master。
 6.其他slave指定new master
 
-##修改主机名
+## 修改主机名
 ```
 /etc/sysconfig/network
 hostname    命令
 ```
 
-#MHA架构创建流程
-##一.搭建一主双从结构
+# MHA架构创建流程
+## 一.搭建一主双从结构
 看主从的笔记
 
-##二.安装MHA
+## 二.安装MHA
 - 1.在所有节点安装MHA node所需的perl模块（DND）
 `[root@master ~]# yum install perl-DBD-MySQL -y`
 
@@ -96,7 +96,7 @@ o conf commit
 rpm -ivh perl-Config-Tiny-2.12-1.el6.rfx.noarch.rpm  
 ```
 
-##三.配置SSH登录无密码验证
+## 三.配置SSH登录无密码验证
 - 原理：
 无密码ssh：生成公钥和公钥，然后传输给其他服务器公钥，那么别的服务器就可以无密码登陆ssh了。
 `- ssh-keygen`创建公钥和密钥
@@ -112,23 +112,23 @@ ssh-copy-id root@172.16.50.95
 ssh-copy-id root@172.16.50.96
 ```
 
-##四.创建监控用户，在master上执行
+## 四.创建监控用户，在master上执行
 ```
 create user 'monitor'@'172.16.12.%' identified by '123456';
 grant all privileges on *.* to 'monitor'@'172.16.12.%';
 flush  privileges;
 ```
-**到这里整个集群环境已经搭建完毕，剩下的就是配置MHA软件了。**
+** 到这里整个集群环境已经搭建完毕，剩下的就是配置MHA软件了。 **
 
-##五.配置MHA
-###1，创建MHA的工作目录，并且创建相关配置文件
+## 五.配置MHA
+### 1，创建MHA的工作目录，并且创建相关配置文件
 - 在monitor上执行
 ```
 mkdir -p /etc/masterha
 cp mha4mysql-manager-0.56/samples/conf/app1.cnf /etc/masterha/
 ```
 
-###2，修改app1.cnf配置文件，修改后的文件内容如下
+### 2，修改app1.cnf配置文件，修改后的文件内容如下
 ```
 [server default]
 manager_log=/var/log/masterha/app1/manager.log
@@ -158,7 +158,7 @@ hostname=172.16.12.112    ##monitor
 port=3306
 ```
 
-###3，设置relay log的清除方式（在每个slave节点上）：
+### 3，设置relay log的清除方式（在每个slave节点上）：
 - 关闭relay log自动清除设置
 ```
 set global relay_log_purge=0;

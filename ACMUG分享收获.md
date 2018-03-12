@@ -22,4 +22,4 @@ server层锁：MDL元数据锁
 主键锁：AI锁
 范围锁避免：
 1.修改隔离级别到rc.
-2.修改innodb_locks_unsafe_for_binlog
+2.修改innodb_locks_unsafe_for_binlog.
